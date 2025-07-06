@@ -14,6 +14,7 @@ set(PROJECT_SOURCES
     hittable_list.h
     math.h
     interval.h
+    material.h
 )
 
 add_executable(raytracer
