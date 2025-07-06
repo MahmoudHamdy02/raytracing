@@ -9,6 +9,7 @@ set(PROJECT_SOURCES
     color.h
     ray.h
     sphere.h
+    camera.h
     hittable.h
     hittable_list.h
     math.h
