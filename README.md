@@ -16,6 +16,6 @@ cmake --build .
 ./raytracing > image.ppm
 ```
 
-Example output at 50 sample per pixel:
+Example output at 50 samples per pixel:
 
 ![Ray traced image](./image.ppm)
