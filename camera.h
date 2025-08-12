@@ -1,8 +1,16 @@
 #pragma once
 
+#include <algorithm>
+#include <execution>
+#include <iostream>
+#include <numeric>
+#include <thread>
+#include <vector>
+
 #include "color.h"
 #include "hittable.h"
 #include "material.h"
+#include "timer.h"
 
 class camera
 {
@@ -26,17 +34,42 @@ public:
 
         std::cout << "P3\n" << image_width << ' ' << image_height << "\n255\n";
 
-        for (int j = 0; j < image_height; j++) {
-            std::clog << "\rScanlines remaining: " << (image_height - j) << ' ' << std::flush;
-            for (int i = 0; i < image_width; i++) {
-                color pixel_color(0, 0, 0);
-                for (int sample = 0; sample < samples_per_pixel; sample++) {
-                    ray r = get_ray(i, j);
-                    pixel_color += ray_color(r, max_depth, world);
+        std::vector<vec3> image(image_width * image_height);
+        std::vector<int> pixel_indices(image.size());
+        std::iota(pixel_indices.begin(), pixel_indices.end(), 0);
+
+        unsigned int nThreads = std::thread::hardware_concurrency();
+        std::vector<std::thread> threads;
+
+        unsigned int completedLines = 0;
+
+        // Create N threads, each with their own index
+        // Each threads processes lines as 0, N, 2N
+        for (int i = 0; i < nThreads; i++) {
+            threads.push_back(std::thread([&, i]() {
+                int rowIndex = i;
+                while (rowIndex < image_height) {
+                    // Process line of pixels
+                    for (int pixelIndex = 0; pixelIndex < image_width; pixelIndex++) {
+                        color pixel_color(0, 0, 0);
+                        for (int sample = 0; sample < samples_per_pixel; sample++) {
+                            ray r = get_ray(pixelIndex, rowIndex);
+                            pixel_color += ray_color(r, max_depth, world);
+                        }
+                        image[pixelIndex + rowIndex * image_width] = pixel_samples_scale * pixel_color;
+                    }
+
+                    // Move to next line
+                    rowIndex += nThreads;
                 }
-                write_color(std::cout, pixel_samples_scale * pixel_color);
-            }
+            }));
         }
+
+        for (std::thread& thread : threads) {
+            thread.join();
+        }
+
+        for (const vec3& pixel : image) write_color(std::cout, pixel);
 
         std::clog << "\rDone.                 \n";
     }

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <cmath>
-#include <cstdlib>
-#include <iostream>
 #include <limits>
 #include <memory>
+#include <random>
+#include <thread>
 
 // C++ Std Usings
 
@@ -23,10 +22,13 @@ inline double degrees_to_radians(double degrees)
     return degrees * pi / 180.0;
 }
 
+inline thread_local std::mt19937 rng(static_cast<unsigned>(std::hash<std::thread::id>{}(std::this_thread::get_id()) ^
+                                                           std::random_device{}()));
+inline std::uniform_real_distribution<double> dist(0.0, 1.0);
+
 inline double random_double()
 {
-    // Returns a random real in [0,1).
-    return std::rand() / (RAND_MAX + 1.0);
+    return dist(rng);
 }
 
 inline double random_double(double min, double max)

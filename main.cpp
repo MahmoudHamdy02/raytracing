@@ -1,3 +1,7 @@
+#include <chrono>
+#include <iostream>
+#include <thread>
+
 #include "camera.h"
 #include "hittable_list.h"
 #include "math.h"
@@ -51,7 +55,7 @@ int main()
 
     cam.aspect_ratio = 16.0 / 9.0;
     cam.image_width = 720;
-    cam.samples_per_pixel = 50;
+    cam.samples_per_pixel = 10;
     cam.max_depth = 10;
 
     cam.vfov = 20;
@@ -61,6 +65,8 @@ int main()
 
     cam.defocus_angle = 0.6;
     cam.focus_dist = 10.0;
-
-    cam.render(world);
+    {
+        Timer timer("Render time: ");
+        cam.render(world);
+    }
 }
