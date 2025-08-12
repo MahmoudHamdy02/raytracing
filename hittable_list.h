@@ -4,17 +4,18 @@
 #include <vector>
 
 #include "hittable.h"
+#include "sphere.h"
 
 using std::make_shared;
 using std::shared_ptr;
 
-class hittable_list : public hittable
+class hittable_list
 {
 public:
-    std::vector<shared_ptr<hittable>> objects;
+    std::vector<shared_ptr<sphere>> objects;
 
     hittable_list() {}
-    hittable_list(shared_ptr<hittable> object)
+    hittable_list(shared_ptr<sphere> object)
     {
         add(object);
     }
@@ -24,12 +25,12 @@ public:
         objects.clear();
     }
 
-    void add(shared_ptr<hittable> object)
+    void add(shared_ptr<sphere> object)
     {
         objects.push_back(object);
     }
 
-    bool hit(const ray& r, interval ray_t, hit_record& rec) const override
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const
     {
         hit_record temp_rec;
         bool hit_anything = false;

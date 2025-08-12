@@ -1,9 +1,10 @@
 #pragma once
 
 #include "hittable.h"
+#include "interval.h"
 #include "vec3.h"
 
-class sphere : public hittable
+class sphere
 {
 public:
     sphere(const point3& center, double radius, shared_ptr<material> mat)
@@ -11,7 +12,7 @@ public:
     {
     }
 
-    bool hit(const ray& r, interval ray_t, hit_record& rec) const override
+    bool hit(const ray& r, interval ray_t, hit_record& rec) const
     {
         vec3 oc = center - r.origin();
         auto a = r.direction().length_squared();

@@ -1,7 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <execution>
 #include <iostream>
 #include <numeric>
 #include <thread>
@@ -9,6 +7,7 @@
 
 #include "color.h"
 #include "hittable.h"
+#include "hittable_list.h"
 #include "material.h"
 #include "timer.h"
 
@@ -28,7 +27,7 @@ public:
     double defocus_angle = 0;  // Variation angle of rays through each pixel
     double focus_dist = 10;    // Distance from camera lookfrom point to plane of perfect focus
 
-    void render(const hittable& world)
+    void render(const hittable_list& world)
     {
         initialize();
 
@@ -122,7 +121,7 @@ private:
         defocus_disk_v = v * defocus_radius;
     }
 
-    color ray_color(const ray& r, int depth, const hittable& world) const
+    color ray_color(const ray& r, int depth, const hittable_list& world) const
     {
         // If we've exceeded the ray bounce limit, no more light is gathered.
         if (depth <= 0) return color(0, 0, 0);
